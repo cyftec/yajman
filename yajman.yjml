@@ -1,0 +1,165 @@
+Yajman:
+
+  has language charter: # yajman.yjml v3.4 — meta-spec for YJML; examples: es_modules.yjml, todos_app.yjml
+
+    has system scope rule:
+      - should treat Yajman as a language for drafting any system in the world in one tree
+      - should not limit Yajman to software; apps, drivers, engines, buildings, tools, and processes are all valid subjects
+      - should name the chosen system once at the root of each <system>.yjml document
+
+    has totality of description rule:
+      - should use the tree to describe the system as a whole (parts, layout, roles, relationships)
+      - should put most descriptive prose in # comments on structural ('has') lines
+      - should use structural and behavioral nodes for intangible systems when the entity itself carries the description
+
+    has totality of specification rule:
+      - should use the tree to state every required behaviour of the system
+      - should rely on the split between structural nodes and behavioral nodes to hold the full specification
+      - should write labels and '- should' text in language specific to the system under documentation
+      - should write this meta document in domain-neutral language and defer system-specific terms to product trees
+      - should prefer a deeper tree of small assemblies over a flat list of many siblings at one level
+      - should put optional code paths and symbols in # comments when the system is a program
+
+  has language definition: # syntax, structure, and behaviour rules
+
+    has dual node syntax: # only two node kinds exist in YJML
+
+      has structural node form: # noun node
+        - should start a structural line with the keyword 'has', then an owner label, then a colon
+        - should add an optional # comment after the colon when more description is needed
+        - should nest child structural nodes or behavioral lines beneath that owner
+
+      has behavioral node form: # verb node
+        - should start a behavioral line with a hyphen, then the keyword 'should', then the requirement text
+        - should indent each behavioral line under the structural parent that owns that requirement
+        - should not attach behavioral lines without a parent structural owner
+
+      has document envelope rule: # V1 V2 V14 — file shape
+        - should keep exactly one top-level key (the system name) and nest the whole tree under it
+        - should not express requirements using YAML shapes other than 'has' lines and '- should' lines
+        - should indent two spaces per level
+        - should allow '&anchor' on a 'has' line and '*anchor' in a '- should' line when one part refers to another
+        - should note that unquoted colons inside '- should' text may break strict YAML parsers; quote those lines or use a YJML-aware linter
+
+    has structural node language: # what a 'has' owner may name
+
+      has entity naming rules:
+
+        has physical entity rule: # V3
+          - should name each structural owner after a physical part, place, assembly, mechanism, or role in the real system
+          - should not use 'has' labels for phases, journeys, or vague areas with no referent in the system
+
+        has owner label rule: # V4
+          - should write owner labels in normal case (words with spaces), like fuel pump or project root validator
+          - should not use camelCase or PascalCase in an owner label
+          - should not use a filesystem path or a full English sentence as the label
+          - should prefer role or part names over implementation artifact names in the label when both are possible
+          - should use the # on a structural line for extra description and optional traceability (drawing, code symbol, etc.)
+
+      has assembly rules:
+
+        has composite entity rule: # V4a
+          - should add a parent structural owner for the whole assembly and child structural owners for distinct parts or sub-roles
+          - should give each child the '- should' lines that belong to that part, not to a vague parent
+          - should usually leave assembly parents with child structural nodes only, not a long mixed '- should' list
+          - should put '&anchor' on a structural owner that other owners reference with '*anchor'
+          - should not split the same product into parallel branches for capability versus implementation (wrong: one branch for business job and another for cli implementation)
+          - should nest command intake, validation, planning, and execution under one assembly when they are one end-to-end behaviour
+
+        has composition ordering rule: # V5 V16
+          - should order direct sibling 'has' children by time flow, assembly order, or larger-to-smaller scope (pick one rule per parent and stay consistent)
+          - should list core or enclosing parts before peripheral or smaller parts
+          - should nest from the assembly down to the part before naming a small control on that part
+          - should not hang a detail on the system root when it belongs inside an intermediate owner
+
+      has nesting rules: # V10 V12 — depth over width
+
+        has nesting depth rule:
+          - should target two or three direct child 'has' owners per parent on the first structuring pass
+          - should add intermediate parents and go deeper instead of listing four or more siblings at one level
+          - should allow a fourth direct child 'has' only when three children cannot express the relationship and the reader can see why
+          - should treat four children on one parent as rare; a whole document should have at most one such parent, or none
+          - should allow a parent with zero child 'has' owners when it only has '- should' lines
+          - should nest from the whole system down to the smallest owned part that still carries requirements
+
+        has nesting refinement rule:
+          - should review parents with three children before adding a fourth
+          - should prefer a new intermediate 'has' owner (with two or three children) over a fourth sibling
+          - should re-run this review until the tree is deep, mostly two-or-three-wide, and four-wide only where unavoidable
+
+        has lineage purpose rule:
+          - should treat a structural owner's purpose as the plain story told by reading its whole subtree down to every '- should' leaf
+          - should not rely on the parent # comment to explain what the parent is for; the lineage must carry that meaning
+          - should delete, merge, or relocate a parent when the deduced purpose is only that it groups children and adds no story the lineage needs
+          - should rename a parent when the deduced purpose from lineage does not match the owner label
+          - should merge sibling branches when lineage shows the same end-to-end job split only by layer names (surface, writer, implementation)
+          - should run this lineage-purpose check on every refactor iteration before keeping an intermediate assembly
+
+    has behavioral node language: # what a '- should' line must do
+
+      has line form rules:
+
+        has should prefix rule: # V7
+          - should make every product acceptance line begin with the literal word 'should' immediately after "- "
+          - should not add a separate '# should' marker on the parent 'has' line
+
+        has read aloud rule: # V8
+          - should sound natural when you speak the structural label then the rest of the '- should' line
+          - should rename the owner or rewrite the requirement until that sentence sounds normal
+
+      has requirement rules:
+
+        has requirement wording rule: # V9
+          - should state observable or verifiable outcomes after 'should'
+          - should use vocabulary natural to the system being specified
+          - should avoid unnecessary jargon in the meta rules file itself
+
+        has behavioral grouping rule: # V11 V13
+          - should split overload by nesting deeper (intermediate parents with two or three children), not by adding a fourth sibling
+          - should move each '- should' line under the smallest structural owner that owns that behaviour
+          - should make every '- should' line checkable in principle (test, inspection, measurement, or review)
+          - should cover every agreed requirement from the source brief with no orphans
+
+      has owner reference rule: # V15
+        - should define every '*name' in a '- should' line with a matching '&name' on an earlier 'has' line
+        - should name anchors consistently within one document
+        - should put every word after '*anchor' on the same line into a # comment
+        - should use this delegation shape: '- should call: *anchor # when or why'
+        - should state each behavioural requirement under one structural owner
+        - should let another owner delegate with '- should call: *anchor # …' instead of duplicating the same requirement
+
+  has drafting process: # from brief to <system>.yjml
+
+    has content drafting: # passes 1–3
+
+      has requirement harvester: # pass 1
+        - should list every required behaviour from the brief in plain language (no tree yet)
+        - should include normal operation, failures, edges, exclusions, and example situations
+
+      has behavioral drafter: # pass 2
+        - should turn that list into '- should' lines (fix wording here; change later only for grammar)
+        - should count those lines for the final coverage check
+
+      has entity mapper: # pass 3
+        - should list the real parts, assemblies, and roles that will own requirements
+        - should add structural parents and children before attaching '- should' lines
+        - should map each '- should' line to the smallest structural owner that truly owns that behaviour
+
+    has shape drafting: # passes 4–6
+
+      has tree assembler: # pass 4 — two-or-three-wide first cut
+        - should set the single system root key with two or three top-level structural areas
+        - should refine downward whole-to-part with two or three child 'has' owners per parent
+        - should enforce composition ordering and nest heavy '- should' lists under new intermediate owners
+
+      has nesting refiner: # pass 5
+        - should fix any parent with four or more child 'has' owners by inserting intermediate assemblies
+        - should allow exactly one four-wide parent only if deeper nesting would misrepresent the system
+        - should otherwise leave the document with no four-wide parents
+        - should walk each intermediate parent and apply the lineage-purpose rule; remove or re-home nodes that fail it
+
+      has conformity checker: # pass 6
+        - should confirm one root, only 'has' and '- should', two-space indent, labels, read-aloud, anchors, and sibling ordering
+        - should confirm almost every parent has two or three child 'has' owners; flag unexplained four-wide parents
+        - should confirm each structural parent has a clear purpose deducible from descendants alone, without leaning on the parent # comment
+        - should confirm '- should' count matches the pass-1 harvest
